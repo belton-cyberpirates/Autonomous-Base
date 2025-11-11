@@ -34,9 +34,10 @@ public class Launcher {
     }
 
 
-    public boolean isBusy() {
-        return launcher.isBusy();
-    }
+	public boolean isAtVelocity() {
+		return launcher.getVelocity() > BotConfig.LAUNCHER_VELOCITY - BotConfig.LAUNCHER_VELOCITY_MARGIN &&
+			launcher.getVelocity() < BotConfig.LAUNCHER_VELOCITY + BotConfig.LAUNCHER_VELOCITY_MARGIN;
+	}
     
     public int getVelocity() {
         return (int)launcher.getVelocity();
