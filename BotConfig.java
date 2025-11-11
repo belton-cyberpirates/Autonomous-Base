@@ -15,6 +15,8 @@ public class BotConfig {
   public static final String STOPPER_NAME = "stopper";
 
   public static final String LAUNCHER_NAME = "launcher";
+  // public static final String LAUNCHER_LEFT_NAME = "launcherLeft";
+  // public static final String LAUNCHER_RIGHT_NAME = "launcherRight";
   // ---------------------------------------------------------------------------
 
 
