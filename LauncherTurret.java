@@ -18,18 +18,21 @@ public class Launcher {
 	public DcMotorEx launcherRight;
 	public DcMotorEx turret;
 
+	int launcherTargetVelocity = 0;
+
 
 	public Launcher(LinearOpMode auto) {
 		this.auto = auto;
 		
 		this.launcherLeft = auto.hardwareMap.get(DcMotorEx.class, BotConfig.LAUNCHER_LEFT_NAME);
 		this.launcherRight = auto.hardwareMap.get(DcMotorEx.class, BotConfig.LAUNCHER_RIGHT_NAME);
-		
+
 		this.turret = auto.hardwareMap.get(DcMotorEx.class, BotConfig.TURRET_NAME);
 	}
   
   
 	public void SetVelocity(int velocity) {
+		launcherTargetVelocity = velocity;
 		launcherLeft.setVelocity(-velocity);
 		launcherRight.setVelocity(velocity);
 	}
@@ -57,9 +60,11 @@ public class Launcher {
 	}
 
 
-	public boolean isBusy() {
-		return launcher.isBusy();
+	public boolean isAtVelocity() {
+		return launcher.getVelocity() > this.launcherTargetVelocity - BotConfig.LAUNCHER_VELOCITY_MARGIN &&
+			launcher.getVelocity() < this.launcherTargetVelocity + BotConfig.LAUNCHER_VELOCITY_MARGIN;
 	}
+	
 	
 	public int getVelocity() {
 		return launcher.getVelocity();

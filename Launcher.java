@@ -16,6 +16,8 @@ public class Launcher {
 
     public DcMotorEx launcher;
 
+	int launcherTargetVelocity = 0;
+
 
     public Launcher(LinearOpMode auto) {
         this.auto = auto;
@@ -25,6 +27,7 @@ public class Launcher {
   
   
     public void SetVelocity(int velocity) {
+		this.launcherTargetVelocity = velocity;
         launcher.setVelocity(velocity);
     }
 
@@ -35,10 +38,11 @@ public class Launcher {
 
 
 	public boolean isAtVelocity() {
-		return launcher.getVelocity() > BotConfig.LAUNCHER_VELOCITY - BotConfig.LAUNCHER_VELOCITY_MARGIN &&
-			launcher.getVelocity() < BotConfig.LAUNCHER_VELOCITY + BotConfig.LAUNCHER_VELOCITY_MARGIN;
+		return launcher.getVelocity() > this.launcherTargetVelocity - BotConfig.LAUNCHER_VELOCITY_MARGIN &&
+			launcher.getVelocity() < this.launcherTargetVelocity + BotConfig.LAUNCHER_VELOCITY_MARGIN;
 	}
     
+
     public int getVelocity() {
         return (int)launcher.getVelocity();
     }
