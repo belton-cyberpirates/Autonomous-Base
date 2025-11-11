@@ -1,18 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
 
-public class SpinPusher extends Action {
-	Auto auto;
+public class CloseStopper extends Action {
+    Auto auto;
 
-	public SpinPusher(Auto auto) {
-		this.auto = auto;
-	}
+    public CloseStopper(Auto auto) {
+        this.auto = auto;
+    }
 
-	public void onStart() {
-		auto.intake.CloseStopper();
-	}
+    public void onStart() {
+        auto.intake.CloseStopper();
+    }
 
-	public boolean isDone() {
-		return true;
-	}
+    public boolean isDone() {
+        return true;
+    }
 }

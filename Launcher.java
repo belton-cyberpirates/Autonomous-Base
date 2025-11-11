@@ -12,33 +12,33 @@ import java.util.List;
 
 public class Launcher {
 
-	private LinearOpMode auto;
+    private LinearOpMode auto;
 
-	public DcMotorEx launcher;
+    public DcMotorEx launcher;
 
 
-	public Intake(LinearOpMode auto) {
-		this.auto = auto;
-		
-		this.intake = auto.hardwareMap.get(DcMotorEx.class, BotConfig.LAUNCHER_NAME);
-	}
+    public Launcher(LinearOpMode auto) {
+        this.auto = auto;
+        
+        this.launcher = auto.hardwareMap.get(DcMotorEx.class, BotConfig.LAUNCHER_NAME);
+    }
   
   
-	public void SetVelocity(int velocity) {
-		launcher.setVelocity(velocity);
-	}
+    public void SetVelocity(int velocity) {
+        launcher.setVelocity(velocity);
+    }
 
 
-	public void Spin() {
-		this.SetVelocity(BotConfig.LAUNCHER_VELOCITY);
-	}
+    public void Spin() {
+        this.SetVelocity(BotConfig.LAUNCHER_VELOCITY);
+    }
 
 
-	public boolean isBusy() {
-		return launcher.isBusy();
-	}
-	
-	public int getVelocity() {
-		return launcher.getVelocity();
-	}
+    public boolean isBusy() {
+        return launcher.isBusy();
+    }
+    
+    public int getVelocity() {
+        return (int)launcher.getVelocity();
+    }
 }

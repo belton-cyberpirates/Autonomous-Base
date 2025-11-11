@@ -12,57 +12,57 @@ import java.util.List;
 
 public class Intake {
 
-	private LinearOpMode auto;
+    private LinearOpMode auto;
 
-	public DcMotorEx intake;
-	public DcMotorEx pusher;
-	public Servo stopper;
+    public DcMotorEx intake;
+    public DcMotorEx pusher;
+    public Servo stopper;
 
 
-	public Intake(LinearOpMode auto) {
-		this.auto = auto;
-		
-		this.intake = auto.hardwareMap.get(DcMotorEx.class, BotConfig.INTAKE_NAME);
-		this.pusher = auto.hardwareMap.get(DcMotorEx.class, BotConfig.PUSHER_NAME);
-		this.stopper = auto.hardwareMap.get(Servo.class, BotConfig.STOPPER_NAME);
-	}
+    public Intake(LinearOpMode auto) {
+        this.auto = auto;
+        
+        this.intake = auto.hardwareMap.get(DcMotorEx.class, BotConfig.INTAKE_NAME);
+        this.pusher = auto.hardwareMap.get(DcMotorEx.class, BotConfig.PUSHER_NAME);
+        this.stopper = auto.hardwareMap.get(Servo.class, BotConfig.STOPPER_NAME);
+    }
   
   
-	public void SetIntakeVelocity(int velocity) {
-		intake.setVelocity(velocity);
-	}
+    public void SetIntakeVelocity(int velocity) {
+        intake.setVelocity(velocity);
+    }
 
 
-	public void SpinIntake() {
-		this.SetIntakeVelocity(BotConfig.PUSHER_VELOCITY)
-	}
+    public void SpinIntake() {
+        this.SetIntakeVelocity(BotConfig.PUSHER_VELOCITY);
+    }
   
   
-	public void SetPusherVelocity(int velocity) {
-		pusher.setVelocity(velocity);
-	}
+    public void SetPusherVelocity(int velocity) {
+        pusher.setVelocity(velocity);
+    }
 
 
-	public void SpinPusher() {
-		this.SetPusherVelocity(BotConfig.INTAKE_VELOCITY)
-	}
+    public void SpinPusher() {
+        this.SetPusherVelocity(BotConfig.INTAKE_VELOCITY);
+    }
 
 
-	public void OpenStopper() {
-		stopper.setPosition(BotConfig.STOPPER_OPEN_POS);
-	}
+    public void OpenStopper() {
+        stopper.setPosition(BotConfig.STOPPER_OPEN_POS);
+    }
 
 
-	public void CloseStopper() {
-		stopper.setPosition(BotConfig.STOPPER_CLOSE_POS);
-	}
+    public void CloseStopper() {
+        stopper.setPosition(BotConfig.STOPPER_CLOSE_POS);
+    }
 
 
-	public boolean isStopperOpen() {
-		return stopper.getPosition() == BotConfig.STOPPER_OPEN_POS;
-	}
-	
-	public int getIntakeVelocity() {
-		return wrist.getCurrentPosition();
-	}
+    public boolean isStopperOpen() {
+        return stopper.getPosition() == BotConfig.STOPPER_OPEN_POS;
+    }
+    
+    public int getIntakeVelocity() {
+        return (int)intake.getVelocity();
+    }
 }
