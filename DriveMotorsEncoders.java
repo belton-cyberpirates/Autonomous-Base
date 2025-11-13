@@ -46,7 +46,7 @@ public class DriveMotors {
 	public DcMotorEx backLeft;
 	public DcMotorEx backRight;
 
-	public GoBildaPinpointDriver odometry;
+	//public GoBildaPinpointDriver odometry;
 
 	private LinearOpMode auto;
 
@@ -89,6 +89,14 @@ public class DriveMotors {
 		double deltaTime = deltaTimer.seconds();
 
 		switch (this.state) {
+			case ENCODERS:
+				SetToRunToPosition();
+				break;
+
+			case POWER:
+				SetToRunWithPower();
+				break
+
 			case DISTANCE:
 				SetToRunWithPower();
 				driveWithDistanceSensor(deltaTime);
@@ -113,6 +121,8 @@ public class DriveMotors {
 
 
 	public void MoveWithEncoders(int backLeftPos, int frontLeftPos, int frontRightPos, int backRightPos) {
+		state = states.ENCODERS;
+
 		backLeft.setTargetPosition(backLeft.getTargetPosition() + backLeftPos);
 		frontLeft.setTargetPosition(frontLeft.getTargetPosition() + frontLeftPos);
 		frontRight.setTargetPosition(frontRight.getTargetPosition() + frontRightPos);
@@ -219,6 +229,14 @@ public class DriveMotors {
 		this.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		this.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		this.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+	}
+
+
+	private void SetToRunToPosition() {
+		this.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		this.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		this.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		this.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 	}
   
   

@@ -152,6 +152,10 @@ public class DriveMotors {
                 SetToRunWithPower();
                 driveWithDistanceSensor(deltaTime);
                 break;
+            
+            case POWER:
+                SetToRunWithPower();
+                break;
         }
         
         this.odometry.update();
