@@ -2,16 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 
 public class WaitForLauncher extends Action {
-	Auto auto;
+    Auto auto;
 
 
-	public WaitForLauncher(Auto auto) {
-		this.auto = auto;
-	}
+    public WaitForLauncher(Auto auto) {
+        this.auto = auto;
+    }
 
-	public void onStart() {}
+    public void onStart() {}
 
-	public boolean isDone() {
-		return !this.auto.launcher.isBusy();
-	}
+    public boolean isDone() {
+        return this.auto.launcher.isAtVelocity();
+    }
 }

@@ -33,7 +33,7 @@ public abstract class Auto extends LinearOpMode {
         launcher = new Launcher(this);
 
         // Run class initialization funcs
-        driveMotors.InitializeOdometry();
+        //driveMotors.InitializeOdometry();
 
         // Let the user know when initialization is done
         telemetry.addData("Beginning Initialization...", "");
@@ -69,8 +69,8 @@ public abstract class Auto extends LinearOpMode {
             driveMotors.process();
             
             // Loop telemetry; updates constantly
-            telemetry.addData("X pos", driveMotors.odometry.getPosX(DistanceUnit.MM));
-            telemetry.addData("Y pos", driveMotors.odometry.getPosY(DistanceUnit.MM));
+            //telemetry.addData("X pos", driveMotors.odometry.getPosX(DistanceUnit.MM));
+            //telemetry.addData("Y pos", driveMotors.odometry.getPosY(DistanceUnit.MM));
             telemetry.addData("Launcher Velocity", launcher.getVelocity());
 
             telemetry.update();

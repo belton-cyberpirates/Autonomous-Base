@@ -2,17 +2,17 @@ package org.firstinspires.ftc.teamcode;
 
 
 public class SpinPusher extends Action {
-	Auto auto;
+    Auto auto;
 
-	public SpinPusher(Auto auto) {
-		this.auto = auto;
-	}
+    public SpinPusher(Auto auto) {
+        this.auto = auto;
+    }
 
-	public void onStart() {
-		auto.intake.SpinPusher();
-	}
+    public void onStart() {
+        auto.intake.SpinPusher();
+    }
 
-	public boolean isDone() {
-		return true;
-	}
+    public boolean isDone() {
+        return true;
+    }
 }

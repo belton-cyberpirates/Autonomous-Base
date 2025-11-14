@@ -2,17 +2,17 @@ package org.firstinspires.ftc.teamcode;
 
 
 public class SpinLauncher extends Action {
-	Auto auto;
+    Auto auto;
 
-	public SpinLauncher(Auto auto) {
-		this.auto = auto;
-	}
+    public SpinLauncher(Auto auto) {
+        this.auto = auto;
+    }
 
-	public void onStart() {
-		auto.launcher.Spin();
-	}
+    public void onStart() {
+        auto.launcher.Spin();
+    }
 
-	public boolean isDone() {
-		return true;
-	}
+    public boolean isDone() {
+        return true;
+    }
 }

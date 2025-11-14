@@ -34,7 +34,7 @@ public class Intake {
 
 
     public void SpinIntake() {
-        this.SetIntakeVelocity(BotConfig.PUSHER_VELOCITY);
+        this.SetIntakeVelocity(BotConfig.AUTO_INTAKE_VELOCITY);
     }
   
   
@@ -44,7 +44,7 @@ public class Intake {
 
 
     public void SpinPusher() {
-        this.SetPusherVelocity(BotConfig.INTAKE_VELOCITY);
+        this.SetPusherVelocity(BotConfig.AUTO_PUSHER_VELOCITY);
     }
 
 

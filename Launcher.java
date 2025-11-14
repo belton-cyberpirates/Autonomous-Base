@@ -16,7 +16,7 @@ public class Launcher {
 
     public DcMotorEx launcher;
 
-	int launcherTargetVelocity = 0;
+    int launcherTargetVelocity = 0;
 
 
     public Launcher(LinearOpMode auto) {
@@ -27,20 +27,20 @@ public class Launcher {
   
   
     public void SetVelocity(int velocity) {
-		this.launcherTargetVelocity = velocity;
+        this.launcherTargetVelocity = velocity;
         launcher.setVelocity(velocity);
     }
 
 
     public void Spin() {
-        this.SetVelocity(BotConfig.LAUNCHER_VELOCITY);
+        this.SetVelocity(BotConfig.AUTO_LAUNCHER_VELOCITY);
     }
 
 
-	public boolean isAtVelocity() {
-		return launcher.getVelocity() > this.launcherTargetVelocity - BotConfig.LAUNCHER_VELOCITY_MARGIN &&
-			launcher.getVelocity() < this.launcherTargetVelocity + BotConfig.LAUNCHER_VELOCITY_MARGIN;
-	}
+    public boolean isAtVelocity() {
+        return launcher.getVelocity() > this.launcherTargetVelocity - BotConfig.LAUNCHER_VELOCITY_MARGIN &&
+            launcher.getVelocity() < this.launcherTargetVelocity + BotConfig.LAUNCHER_VELOCITY_MARGIN;
+    }
     
 
     public int getVelocity() {
