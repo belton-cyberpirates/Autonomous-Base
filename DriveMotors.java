@@ -30,6 +30,7 @@ public class DriveMotors {
 
     enum states {
         ODOMETRY,
+        ENCODERS,
         DISTANCE,
         POWER,
         IDLE
@@ -62,6 +63,8 @@ public class DriveMotors {
     public double targetHeading;
 
     public int targetDistance;
+
+    boolean hasPinpoint;
     
     ElapsedTime odometryTimer = new ElapsedTime();
     
@@ -82,8 +85,16 @@ public class DriveMotors {
         this.backRight.setTargetPosition(0);
     
         //this.distSensor = auto.hardwareMap.get(DistanceSensor.class, BotConfig.DISTANCE_SENSOR_NAME);
-
-        this.odometry = auto.hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+       
+        hasPinpoint = (BotConfig.PINPOINT_NAME != "");
+        if (this.hasPinpoint) {
+            this.odometry = auto.hardwareMap.get(GoBildaPinpointDriver.class, BotConfig.PINPOINT_NAME);
+            state = states.ODOMETRY;
+            InitializeOdometry();
+        }
+        else {
+            state = states.ENCODERS;
+        }
 
         ResetEncoders();
         SetZeroBehaviour();
@@ -116,7 +127,7 @@ public class DriveMotors {
         increase when you move the robot forward. And the Y (strafe) pod should increase when
         you move the robot to the left.
          */
-        this.odometry.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        this.odometry.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
 
         /*
@@ -129,17 +140,19 @@ public class DriveMotors {
          */
         //odo.recalibrateIMU();
         this.odometry.resetPosAndIMU();
-        this.odometry.setPosition( new Pose2D(DistanceUnit.MM, 0, 0, AngleUnit.RADIANS, 0) );
+        this.odometry.setPosition( new Pose2D(DistanceUnit.MM, 0, 0, AngleUnit.DEGREES, 0) );
     }
 
 
     public double process() {
         double deltaTime = deltaTimer.seconds();
         
-        // Get the heading of the bot (the angle it is facing) in radians
-        double newHeading = odometry.getHeading(AngleUnit.RADIANS);
-        if (!Double.isNaN(newHeading)) {
-            this.heading = newHeading;
+        if (hasPinpoint) {
+            // Get the heading of the bot (the angle it is facing) in radians
+            double newHeading = odometry.getHeading(AngleUnit.RADIANS);
+            if (!Double.isNaN(newHeading)) {
+                this.heading = newHeading;
+            }
         }
 
         switch (this.state) {
@@ -148,6 +161,10 @@ public class DriveMotors {
                 driveWithOdometry(deltaTime);
                 break;
             
+            case ENCODERS:
+                SetToRunToPosition();
+                break;
+
             case DISTANCE:
                 SetToRunWithPower();
                 driveWithDistanceSensor(deltaTime);
@@ -158,7 +175,9 @@ public class DriveMotors {
                 break;
         }
         
-        this.odometry.update();
+        if (hasPinpoint) {
+            this.odometry.update(); 
+        }
         deltaTimer.reset();
         
         return deltaTime;
@@ -172,6 +191,29 @@ public class DriveMotors {
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
+    }
+
+
+    public void DriveAndAim(double forward, double strafe, double targetAngle) {
+        double anglePower = imuPidController.PIDControlRadians(targetAngle, this.heading, delta);
+
+        double backLeftPower   = (-forward - strafe + anglePower);
+        double frontLeftPower  = ( forward - strafe + anglePower);
+        double frontRightPower = ( forward + strafe + anglePower);
+        double backRightPower  = (-forward + strafe + anglePower);
+    }
+
+
+    public void DriveAndAim(double forward, double strafe, double targetX, double targetY) {
+        double xPos = odometry.getPosX(DistanceUnit.MM);
+        double yPos = odometry.getPosY(DistanceUnit.MM);
+
+        double deltaX = xPos - targetX;
+        double deltaY = yPos - targetY;
+
+        double targetAngle = Math.atan2(deltaY, deltaX);
+
+        DriveAndAim(forward, strafe, targetAngle);
     }
 
 
@@ -216,18 +258,20 @@ public class DriveMotors {
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
         
-        auto.telemetry.addData("drivemotors heading", heading);
+        // Telemetry
+        auto.telemetry.addData("X pos", this.odometry.getPosX(DistanceUnit.MM));
+        auto.telemetry.addData("Y pos", this.odometry.getPosY(DistanceUnit.MM));
+        auto.telemetry.addData("drivemotors heading", this.heading);
         
         auto.telemetry.addData("drivemotors xError", xError);
         auto.telemetry.addData("drivemotors yError", yError);
         auto.telemetry.addData("drivemotors angleError", targetHeading - heading);
         
-        auto.telemetry.addData("drivemotors forwardPower", forwardPower);
-        auto.telemetry.addData("drivemotors horizontalPower", horizontalPower);
-        auto.telemetry.addData("drivemotors anglePower", anglePower);
+        // auto.telemetry.addData("drivemotors forwardPower", forwardPower);
+        // auto.telemetry.addData("drivemotors horizontalPower", horizontalPower);
+        // auto.telemetry.addData("drivemotors anglePower", anglePower);
         
-        auto.telemetry.addData("device status", odometry.getDeviceStatus());
-        
+        // auto.telemetry.addData("device status", odometry.getDeviceStatus());
     }
 
 
@@ -248,21 +292,71 @@ public class DriveMotors {
     }
 
 
-    public void Move(double xPos, double yPos, double heading) {
+    public void MoveWithOdometry(double xPos, double yPos, double heading) {
+        if (this.state != states.ODOMETRY) {
+            throw new Exception("Must be in state ODOMETRY to move using odometry!");
+            return;
+        }
+        
         this.targetX = xPos;
         this.targetY = yPos;
         this.targetHeading = -( heading * ( Math.PI / 180 ) );
 
         this.odometryTimer.reset();
+    }
 
-        this.state = states.ODOMETRY;
+
+    public void MoveWithEncoders(int backLeftPos, int frontLeftPos, int frontRightPos, int backRightPos) {
+        if (this.state != states.ENCODERS) {
+            throw new Exception("Must be in state ENCODERS to move using encoders!");
+            return;
+        }
+        
+        backLeft.setTargetPosition(backLeft.getTargetPosition() + backLeftPos);
+        frontLeft.setTargetPosition(frontLeft.getTargetPosition() + frontLeftPos);
+        frontRight.setTargetPosition(frontRight.getTargetPosition() + frontRightPos);
+        backRight.setTargetPosition(backRight.getTargetPosition() + backRightPos);
+    }
+
+    
+    public void MoveWithEncoders(Direction dir, int distance) {
+        
+        switch (dir) {
+            case FORWARD:
+                MoveWithEncoders(-distance, -distance, distance, distance);
+                break;
+            case LEFT:
+                MoveWithEncoders(-distance, distance, distance, -distance);
+                break;
+            case RIGHT:
+                MoveWithEncoders(distance, -distance, -distance, distance);
+                break;
+             case BACKWARD:
+                MoveWithEncoders(distance, distance, -distance, -distance);
+                break;
+            case FRONT_LEFT:
+                MoveWithEncoders(-distance, 0, distance, 0);
+                break;
+            case FRONT_RIGHT:
+                MoveWithEncoders(0, -distance, 0, distance);
+                break;
+            case BACK_LEFT:
+                MoveWithEncoders(0, distance, 0, -distance);
+                break;
+            case BACK_RIGHT:
+                MoveWithEncoders(distance, 0, -distance, 0);
+                break;
+        }
     }
 
 
     public void MoveToDistance(int distance) {
+        if (this.state != states.DISTANCE) {
+            throw new Exception("Must be in state DISTANCE to move using distance!");
+            return;
+        }
+        
         this.targetDistance = distance;
-
-        this.state = states.DISTANCE;
     }
 
 
@@ -279,6 +373,12 @@ public class DriveMotors {
                     (Math.abs(strafePidController.lastError) < 20) && // max horizontal error - MM
                     (Math.abs(imuPidController.lastError) < .03); // max angle error - radians
             
+            case ENCODERS:
+                return (!backLeft.isBusy()) && 
+                    (!frontLeft.isBusy()) && 
+                    (!frontRight.isBusy()) && 
+                    (!backRight.isBusy()); 
+
             case DISTANCE:
                 return (Math.abs(distanceSensorPidController.lastError) < 5);
         }
@@ -308,6 +408,19 @@ public class DriveMotors {
         this.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+
+    private void SetToRunToPosition() {
+        this.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        this.frontLeft.setVelocity(BotConfig.AUTO_DRIVE_VELOCITY);
+        this.frontRight.setVelocity(BotConfig.AUTO_DRIVE_VELOCITY);
+        this.backLeft.setVelocity(BotConfig.AUTO_DRIVE_VELOCITY);
+        this.backRight.setVelocity(BotConfig.AUTO_DRIVE_VELOCITY);
     }
     
     

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.BotConfig;
 import java.util.List;
 
@@ -15,8 +16,12 @@ public class Launcher {
     private LinearOpMode auto;
 
     public DcMotorEx launcher;
+    
+    PIDFController launcherPIDFController = new PIDFController(0.0004, 0.015, 0/*.00001*/, 0/*.0001*/);
 
     int launcherTargetVelocity = 0;
+
+    ElapsedTime deltaTimer = new ElapsedTime();
 
 
     public Launcher(LinearOpMode auto) {
@@ -24,11 +29,34 @@ public class Launcher {
         
         this.launcher = auto.hardwareMap.get(DcMotorEx.class, BotConfig.LAUNCHER_NAME);
     }
+    
+    
+    public double process() {
+        double deltaTime = deltaTimer.seconds();
+        
+        double launcherVelocity = launcher.getVelocity();
+
+        launcher.setPower(
+            launcherPIDFController.PIDFControl(
+                this.launcherTargetVelocity,
+                launcherVelocity,
+                deltaTime
+            )
+        );
+        
+        deltaTimer.reset();
+        
+        // Telemetry
+        auto.telemetry.addData("Launcher Velocity", getVelocity());
+        auto.telemetry.addData("Launcher Target Velocity", launcherTargetVelocity);
+        auto.telemetry.addData("Launcher Power", launcherPIDFController.lastOutput);
+        
+        return deltaTime;
+    }
   
   
     public void SetVelocity(int velocity) {
         this.launcherTargetVelocity = velocity;
-        launcher.setVelocity(velocity);
     }
 
 
@@ -38,8 +66,7 @@ public class Launcher {
 
 
     public boolean isAtVelocity() {
-        return launcher.getVelocity() > this.launcherTargetVelocity - BotConfig.LAUNCHER_VELOCITY_MARGIN &&
-            launcher.getVelocity() < this.launcherTargetVelocity + BotConfig.LAUNCHER_VELOCITY_MARGIN;
+        return launcherPIDFController.lastError <= 50;
     }
     
 

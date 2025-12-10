@@ -14,62 +14,65 @@ public class BotConfig {
   public static final String PUSHER_NAME = "pusher";
   public static final String STOPPER_NAME = "stopper";
 
-  public static final String LAUNCHER_NAME = "launcher";
-  // public static final String LAUNCHER_LEFT_NAME = "launcherLeft";
-  // public static final String LAUNCHER_RIGHT_NAME = "launcherRight";
+  public static final String LAUNCHER_LEFT_NAME = "flywheel";
+  public static final String LAUNCHER_RIGHT_NAME = "flywheel";
+
+  public static final String TURRET_NAME = "turret";
+
+  public static final String PINPOINT_NAME = "odo";
+
+  public static final String LIGHT_NAME = "light";
   // ---------------------------------------------------------------------------
 
 
   /*****************************************************************************
   ** DISTANCE CALIBRATION CONSTANTS
   *****************************************************************************/
-  public static final int TILE_LENGTH = 595; // MM
+  public static final int TILE_LENGTH = 875; //TODO find actual distance
   // ---------------------------------------------------------------------------
 
 
   /*****************************************************************************
-  ** SPEED CALIBRATION CONSTANTS
+  ** TELEOP CALIBRATION CONSTANTS
   *****************************************************************************/
+  public static final double BASE_SPEED = .6;
+  
+  public static final double MAX_BOOST = 0.66; // boost maxes out at an additional 66% of the base speed
   public static final double STRAFE_MULT = 1.41;
-  public static final int MAX_DRIVE_VELOCITY = 2750;
 
-  public static final int INTAKE_VELOCITY = 4500;
-  public static final int PUSHER_VELOCITY = 200;
-  public static final int LAUNCHER_VELOCITY = 2000;
+  public static final int LAUNCHER_DROP_VELOCITY = 300;
+  public static final int LAUNCHER_PASSIVE_VELOCITY = 1000;
+  public static final int LAUNCHER_VELOCITY = 1500;
+  public static final int LAUNCHER_FAR_VELOCITY = 1790;
+  
+  public static final double LIGHT_GREEN = 0.472;
+  public static final double LIGHT_RED = 0.277;
   // ---------------------------------------------------------------------------
 
 
   /*****************************************************************************
-  ** BASE CONSTANTS
+  ** AUTO CALIBRATION CONSTANTS
   *****************************************************************************/
-  //public static final int PICKUP_X = 650;
-  //public static final int PICKUP_Y = -850;
-  // ---------------------------------------------------------------------------
-
-
-  /*****************************************************************************
-  ** INTAKE CONSTANTS
-  *****************************************************************************/
-  public static final double STOPPER_OPEN_POS = 0;
-  public static final double STOPPER_CLOSE_POS = 0.125;
+  public static final int AUTO_DRIVE_VELOCITY = 1000; // encoders only
+  public static final int AUTO_PUSHER_VELOCITY = 700;
+  public static final int AUTO_INTAKE_VELOCITY = 2500;
+  public static final int AUTO_LAUNCHER_VELOCITY = 1425;
   // ---------------------------------------------------------------------------
 
 
   /*****************************************************************************
   ** LAUNCHER CONSTANTS
   *****************************************************************************/
-  public static final double LAUNCHER_VELOCITY_MARGIN = 15;
-  // ---------------------------------------------------------------------------
+  public static final int LAUNCHER_VELOCITY_MARGIN = 40;
+  public static final int TURRET_MAX_OFFSET = 300;
+  
+  public static final double TURRET_OFFSET_FAR_RED = -0.5;
+  public static final double TURRET_OFFSET_FAR_BLUE = 4.5;
+  public static final double TURRET_OFFSET_CLOSE_BLUE = -0.5; // test to find
+  public static final double TURRET_OFFSET_CLOSE_RED = 6; // test to find
 
-
-  /*****************************************************************************
-  ** ODOMETRY CALIBRATION CONSTANTS
-  *****************************************************************************/
-  public static final double FORWARD_OFFSET = 16.25;
-  public static final double TRACK_WIDTH = 367;
-  public static final double WHEEL_DIAMETER = 38;
-  public static final double TICKS_PER_REVOLUTION = 2048;
-  public static final double TICKS_PER_MM = (int)( TICKS_PER_REVOLUTION / ( Math.PI * WHEEL_DIAMETER ) );
+  public static final double STOPPER_OPEN_POS = 0.075;
+  public static final double STOPPER_CLOSE_POS = 0.25;
   // ---------------------------------------------------------------------------
 
 
@@ -77,43 +80,8 @@ public class BotConfig {
   ** CAMERA CONSTANTS
   *****************************************************************************/
   public static final String CAMERA_NAME = "Webcam 1";
-	public static final int CAMERA_RESO_X = 640;
-	public static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/teampiece.tflite";
-	public static final String[] LABELS = { // Define the labels used in our model (must be in training order!)
-		"BLUE",
-		"RED",
-	};
   // ---------------------------------------------------------------------------
 
 
-  /*****************************************************************************
-  ** CAMERA CALIBRATION CONSTANTS
-  * Lens intrinsics
-  * UNITS ARE PIXELS
-  * NOTE: this calibration is for the C920 webcam at 800x448.
-  * You will need to do your own calibration for other configurations!
-
-  Resolution: 1280x720
-  Pixel Size: 2.8um
-  Sensor Size: 3.58x2.02mm
-  Stock lens focal length: 4.2mm
-  *****************************************************************************/
-  public static final double FX = 1430;
-  public static final double FY = 1430;
-  public static final double CX = 480;
-  public static final double CY = 620;
-
-  public static final double TAGSIZE = 0.166;
-  // ---------------------------------------------------------------------------
-
-
-  /*****************************************************************************
-  ** DETECTION CONSTANTS
-  *****************************************************************************/
-  public static final float DECIMATION_HIGH = 3;
-  public static final float DECIMATION_LOW = 2;
-  public static final float THRESHOLD_HIGH_DECIMATION_RANGE_METERS = 1.0f;
-  public static final int NUM_FRAMES_BEFORE_LOW_DECIMATION = 4;
-  public static final int MAX_NUM_FRAMES_NO_DETECTION = 100; // How many attempts to detect before giving up
-  // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 }

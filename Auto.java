@@ -32,9 +32,6 @@ public abstract class Auto extends LinearOpMode {
         intake = new Intake(this);
         launcher = new Launcher(this);
 
-        // Run class initialization funcs
-        //driveMotors.InitializeOdometry();
-
         // Let the user know when initialization is done
         telemetry.addData("Beginning Initialization...", "");
         telemetry.addData("Ready to run!", "");
@@ -67,11 +64,11 @@ public abstract class Auto extends LinearOpMode {
             // Process classes
             // Add, remove, modify depending on how your robot works
             driveMotors.process();
+            launcher.process();
             
             // Loop telemetry; updates constantly
-            //telemetry.addData("X pos", driveMotors.odometry.getPosX(DistanceUnit.MM));
-            //telemetry.addData("Y pos", driveMotors.odometry.getPosY(DistanceUnit.MM));
-            telemetry.addData("Launcher Velocity", launcher.getVelocity());
+            telemetry.addData("X pos", driveMotors.odometry.getPosX(DistanceUnit.MM));
+            telemetry.addData("Y pos", driveMotors.odometry.getPosY(DistanceUnit.MM));
 
             telemetry.update();
         }

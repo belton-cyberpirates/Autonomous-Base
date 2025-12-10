@@ -26,9 +26,22 @@ public class Intake {
         this.pusher = auto.hardwareMap.get(DcMotorEx.class, BotConfig.PUSHER_NAME);
         this.stopper = auto.hardwareMap.get(Servo.class, BotConfig.STOPPER_NAME);
     }
+
+
+    public void SetPower(double power) {
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setPower(power);
+    }
+
+
+    public void SetPusherPower(double power) {
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pusher.setPower(power);
+    }
   
   
     public void SetIntakeVelocity(int velocity) {
+        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setVelocity(velocity);
     }
 
@@ -36,15 +49,26 @@ public class Intake {
     public void SpinIntake() {
         this.SetIntakeVelocity(BotConfig.AUTO_INTAKE_VELOCITY);
     }
+
+
+    public void SpinIntake(double mult) {
+        this.SetIntakeVelocity((int)(BotConfig.AUTO_INTAKE_VELOCITY * mult));
+    }
   
   
     public void SetPusherVelocity(int velocity) {
+        pusher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pusher.setVelocity(velocity);
     }
 
 
     public void SpinPusher() {
         this.SetPusherVelocity(BotConfig.AUTO_PUSHER_VELOCITY);
+    }
+
+
+    public void SpinPusher(double mult) {
+        this.SetPusherVelocity((int)(BotConfig.AUTO_PUSHER_VELOCITY * mult));
     }
 
 
@@ -55,6 +79,11 @@ public class Intake {
 
     public void CloseStopper() {
         stopper.setPosition(BotConfig.STOPPER_CLOSE_POS);
+    }
+
+
+    public void SetStopper(boolean open) {
+        stopper.setPosition(open ? BotConfig.STOPPER_OPEN_POS : BotConfig.STOPPER_CLOSE_POS);
     }
 
 
