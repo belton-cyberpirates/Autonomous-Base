@@ -18,13 +18,24 @@ public class Intake {
     public DcMotorEx pusher;
     public Servo stopper;
 
+    boolean hasPusher;
+    boolean hasStopper;
+
 
     public Intake(LinearOpMode auto) {
         this.auto = auto;
         
         this.intake = auto.hardwareMap.get(DcMotorEx.class, BotConfig.INTAKE_NAME);
-        this.pusher = auto.hardwareMap.get(DcMotorEx.class, BotConfig.PUSHER_NAME);
-        this.stopper = auto.hardwareMap.get(Servo.class, BotConfig.STOPPER_NAME);
+
+        hasPusher = (BotConfig.PUSHER_NAME != "");
+        if (hasPusher) {
+            this.pusher = auto.hardwareMap.get(DcMotorEx.class, BotConfig.PUSHER_NAME);
+        }
+
+        hasStopper = (BotConfig.STOPPER_NAME != "");
+        if (hasStopper) {
+            this.stopper = auto.hardwareMap.get(Servo.class, BotConfig.STOPPER_NAME);
+        }
     }
 
 
@@ -35,6 +46,11 @@ public class Intake {
 
 
     public void SetPusherPower(double power) {
+        if (!hasPusher) {
+            throw new Exception("Must have a pusher to set pusher power!");
+            return;
+        }
+
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         pusher.setPower(power);
     }
@@ -57,27 +73,46 @@ public class Intake {
   
   
     public void SetPusherVelocity(int velocity) {
+        if (!hasPusher) {
+            throw new Exception("Must have a pusher to set pusher velocity!");
+            return;
+        }
+
         pusher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pusher.setVelocity(velocity);
     }
 
 
-    public void SpinPusher() {
-        this.SetPusherVelocity(BotConfig.AUTO_PUSHER_VELOCITY);
-    }
-
-
     public void SpinPusher(double mult) {
+        if (!hasPusher) {
+            throw new Exception("Must have a pusher to set pusher power!");
+            return;
+        }
+
         this.SetPusherVelocity((int)(BotConfig.AUTO_PUSHER_VELOCITY * mult));
     }
 
 
+    public void SpinPusher() {
+        this.SpinPusher(1);
+    }
+
+
     public void OpenStopper() {
+        if (!hasStopper) {
+            throw new Exception("Must have a stopper to open stopper!");
+            return;
+        }
+
         stopper.setPosition(BotConfig.STOPPER_OPEN_POS);
     }
 
 
     public void CloseStopper() {
+        if (!hasStopper) {
+            throw new Exception("Must have a stopper to set close stopper!");
+            return;
+        }
         stopper.setPosition(BotConfig.STOPPER_CLOSE_POS);
     }
 
